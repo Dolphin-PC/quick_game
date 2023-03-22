@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quick_game/screen/record_stage_screen.dart';
 import 'package:quick_game/screen/training_stage_screen.dart';
+import 'package:quick_game/styles/color_styles.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -28,28 +29,36 @@ class _MainScreenState extends State<MainScreen> {
       body: Center(
         child: _screenList.elementAt(_selectedIndex),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        elevation: 30,
+        backgroundColor: ColorStyles.buttonBgColor.withRed(150),
+        onPressed: () {},
+        child: Icon(Icons.play_arrow),
+      ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: ColorStyles.buttonBgColor,
         items: [
           BottomNavigationBarItem(
               icon: _selectedIndex == 0
                   ? const Icon(
                       Icons.timer,
-                      color: Colors.black,
+                      color: Colors.white,
                     )
                   : const Icon(
                       Icons.timer_outlined,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
               label: 'record'),
           BottomNavigationBarItem(
               icon: _selectedIndex == 1
                   ? const Icon(
                       Icons.run_circle,
-                      color: Colors.black,
+                      color: Colors.white,
                     )
                   : const Icon(
                       Icons.run_circle_outlined,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
               label: 'training'),
         ],

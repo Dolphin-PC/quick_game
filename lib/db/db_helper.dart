@@ -19,7 +19,7 @@ class DBHelper {
       // onUpgrade: (Database db, int oldVersion, int newVersion) => {},
     );
 
-    // await devInitDB(db);
+    await devInitDB(db);
 
     return db;
   }
@@ -30,29 +30,17 @@ class DBHelper {
   }
 
   static Future devInitDB(Database db) async {
-    // await db.execute('DROP TABLE if exists point_history');
-    await db.execute('DROP TABLE if exists stage_info');
+    // await db.execute('DROP TABLE if exists stage_info');
 
     String sql1 = '''
-      CREATE TABLE if not exists point_history (
-        id         INTEGER PRIMARY KEY AUTOINCREMENT,
-        point_cnt  INTEGER NOT NULL,
-        point_memo VARCHAR NULL,
-        reg_dt     TIMESTAMP
-      );
-    ''';
-
-    String sql2 = '''
       CREATE TABLE if not exists stage_info (
-        id           INTEGER PRIMARY KEY AUTOINCREMENT,
-        stage_idx    INTEGER NOT NULL,
-        round_idx    INTEGER NOT NULL,
-        is_clear     BOOLEAN NOT NULL,
-        is_lock      BOOLEAN NOT NULL
+        id             INTEGER PRIMARY KEY AUTOINCREMENT,
+        stage_name     VARCHAR NOT NULL,
+        record_time    INTEGER NULL,
+        training_level INTEGER NULL
       );
     ''';
 
     await db.execute(sql1);
-    await db.execute(sql2);
   }
 }
