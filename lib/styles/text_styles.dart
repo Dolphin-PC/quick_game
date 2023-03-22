@@ -11,6 +11,6 @@ class TextStyles {
   static TextStyle get buttonText => GoogleFonts.notoSans(color: ColorStyles.textColor, fontSize: 15, fontWeight: FontWeight.w400);
 
   static TextStyle plainTexts([double fontSize = 15]) {
-    return GoogleFonts.nanumGothic(color: ColorStyles.borderColor, fontSize: fontSize, fontWeight: FontWeight.w400);
+    return GoogleFonts.notoSans(color: ColorStyles.textColor, fontSize: fontSize, fontWeight: FontWeight.w400);
   }
 }

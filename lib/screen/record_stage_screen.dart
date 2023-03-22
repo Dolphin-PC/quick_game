@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:quick_game/data/datas.dart';
 import 'package:quick_game/model/stage_info_model.dart';
 import 'package:quick_game/provider/stage_info_provider.dart';
 import 'package:quick_game/styles/color_styles.dart';
@@ -69,20 +70,26 @@ class _RecordStageScreenState extends State<RecordStageScreen> {
                       builder: (BuildContext context) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black54,
-                                  offset: Offset(5.0, 5.0), //(x,y)
-                                  blurRadius: 6.0,
-                                ),
-                              ],
+                          child: GestureDetector(
+                            onTap: () {
+                              Widget screenWidget = Datas.gameScreenStringList[stageInfoProvider.currentStageInfoModel.stageName]!;
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => screenWidget));
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black54,
+                                    offset: Offset(5.0, 5.0), //(x,y)
+                                    blurRadius: 6.0,
+                                  ),
+                                ],
+                              ),
+                              child: Lottie.asset('assets/lotties/${lottieStringList[item.stageName]}.json'),
                             ),
-                            child: Lottie.asset('assets/lotties/${lottieStringList[item.stageName]}.json'),
                           ),
                         );
                       },

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quick_game/data/datas.dart';
 import 'package:quick_game/provider/stage_info_provider.dart';
 import 'package:quick_game/screen/record_stage_screen.dart';
-import 'package:quick_game/screen/speed_meter_game_screen.dart';
+import 'package:quick_game/screen/game/speed_meter_game_screen.dart';
 import 'package:quick_game/screen/training_stage_screen.dart';
 import 'package:quick_game/styles/color_styles.dart';
 
@@ -26,13 +27,6 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  Map<String, Widget> gameScreenStringList = {
-    "반응속도": SpeedMeterGameScreen(),
-    "똑같은 카드 누르기": SpeedMeterGameScreen(),
-    "순서대로 누르기": SpeedMeterGameScreen(),
-    "카드 나누기": SpeedMeterGameScreen(),
-    "짝맞추기": SpeedMeterGameScreen(),
-  };
   @override
   Widget build(BuildContext context) {
     StageInfoProvider stageInfoProvider = Provider.of(context, listen: true);
@@ -46,7 +40,7 @@ class _MainScreenState extends State<MainScreen> {
         elevation: 30,
         backgroundColor: ColorStyles.buttonBgColor.withRed(150),
         onPressed: () {
-          Widget screenWidget = gameScreenStringList[stageInfoProvider.currentStageInfoModel.stageName]!;
+          Widget screenWidget = Datas.gameScreenStringList[stageInfoProvider.currentStageInfoModel.stageName]!;
           Navigator.push(context, MaterialPageRoute(builder: (context) => screenWidget));
         },
         child: const Icon(Icons.play_arrow),

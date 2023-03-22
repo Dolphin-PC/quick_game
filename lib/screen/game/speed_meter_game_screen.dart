@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quick_game/provider/stage_info_provider.dart';
+import 'package:quick_game/styles/color_styles.dart';
+import 'package:quick_game/widgets/toasts.dart';
 
 class SpeedMeterGameScreen extends StatefulWidget {
   const SpeedMeterGameScreen({Key? key}) : super(key: key);
@@ -14,6 +16,7 @@ class SpeedMeterGameScreen extends StatefulWidget {
 
 class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
   late StageInfoProvider stageInfoProvider;
+
   /// 클릭 가능 여부
   bool isClickable = false;
 
@@ -53,26 +56,40 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
     });
   }
 
+  /// 측정 클릭
   void onClick() {
     if (!isClickable) {
       resultText = '측정 실패!';
       initTimer!.cancel();
     } else {
-      resultText = '측정 결과 : ${_resultMilliSecond}ms';
-      /// 기록 측정
-      stageInfoProvider.setRecordTime(_resultMilliSecond);
       _onStop();
+      _onRecord();
     }
 
     setState(() {});
   }
 
+  /// 측정 성공
+  void _onRecord() {
+    resultText = '';
+    clickText = '측정 결과 : ${_resultMilliSecond}ms';
+
+    /// 기록 측정
+    int? prevRecordTime = stageInfoProvider.currentStageInfoModel.recordTime;
+    if( prevRecordTime == null || prevRecordTime > _resultMilliSecond ){
+      stageInfoProvider.setRecordTime(_resultMilliSecond);
+      Toasts.show(msg: "[신기록] 측정 성공!");
+    }
+  }
+
+  /// 측정 시간 시작
   void _onStart() {
     resultTimer = Timer.periodic(const Duration(milliseconds: 1), (timer) {
       _resultMilliSecond++;
     });
   }
 
+  /// 측정 시간 종료
   void _onStop() {
     resultTimer!.cancel();
   }
@@ -81,8 +98,12 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
   Widget build(BuildContext context) {
     stageInfoProvider = Provider.of(context, listen: false);
     return Scaffold(
+      backgroundColor: ColorStyles.bgPrimaryColor,
       appBar: AppBar(
-        title: Text('순발력 측정'),
+        elevation: 0,
+        backgroundColor: ColorStyles.bgPrimaryColor,
+        centerTitle: true,
+        title: Text("${stageInfoProvider.currentStageInfoModel.stageName}"),
       ),
       body: SafeArea(
         child: Center(
@@ -93,16 +114,19 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
               SizedBox(height: 20),
               GestureDetector(
                 onTap: onClick,
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.5,
-                  width: MediaQuery.of(context).size.width,
-                  color: clickColor,
-                  child: Center(
-                    child: Text(
-                      clickText,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    width: MediaQuery.of(context).size.width,
+                    color: clickColor,
+                    child: Center(
+                      child: Text(
+                        clickText,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
