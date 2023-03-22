@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:quick_game/data/datas.dart';
 import 'package:quick_game/db/db_helper.dart';
 import 'package:sqflite/sqlite_api.dart';
 
@@ -8,18 +9,21 @@ class StageInfoModel {
   StageInfoModel({
     Key? key,
     this.id,
+    this.stageId,
     required this.stageName,
     this.recordTime,
     this.trainingLevel,
   });
 
   final int? id;
+  final String? stageId;
   final String stageName;
   final int? recordTime, trainingLevel;
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'stage_id': stageId,
       'stage_name': stageName,
       'record_time': recordTime,
       'training_level': trainingLevel,
@@ -33,6 +37,7 @@ class StageInfoModel {
     var list = List.generate(maps.length, (i) {
       return StageInfoModel(
         id: maps[i]['id'],
+        stageId: maps[i]['stage_id'],
         stageName: maps[i]['stage_name'],
         recordTime: maps[i]['record_time'],
         trainingLevel: maps[i]['training_level'],
@@ -65,6 +70,7 @@ class StageInfoModel {
     List<StageInfoModel> list = List.generate(maps.length, (i) {
       return StageInfoModel(
         id: maps[i]['id'],
+        stageId: maps[i]['stage_id'],
         stageName: maps[i]['stage_name'],
         recordTime: maps[i]['record_time'],
         trainingLevel: maps[i]['training_level'],
@@ -77,18 +83,19 @@ class StageInfoModel {
   /// 초기 데이터 세팅
   static initData() async {
     var list = await selectList();
-    List<StageInfoModel> initDataList = [
-      StageInfoModel(stageName: "반응속도"),
-      StageInfoModel(stageName: "똑같은 카드 누르기"),
-      StageInfoModel(stageName: "순서대로 누르기"),
-      StageInfoModel(stageName: "카드 나누기"),
-      StageInfoModel(stageName: "짝맞추기"),
-    ];
 
     if (list.isNotEmpty) return;
 
-    for (var data in initDataList) {
-      await data.insert();
+    // List<StageInfoModel> initDataList = [
+    //   StageInfoModel(stageName: "반응속도"),
+    //   StageInfoModel(stageName: "똑같은 카드 누르기"),
+    //   StageInfoModel(stageName: "순서대로 누르기"),
+    //   StageInfoModel(stageName: "카드 나누기"),
+    //   StageInfoModel(stageName: "짝맞추기"),
+    // ];
+
+    for (String key in Datas.stageMap.keys) {
+      await StageInfoModel(stageId: key, stageName: Datas.stageMap[key]!).insert();
     }
   }
 }

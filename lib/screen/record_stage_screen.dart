@@ -18,17 +18,9 @@ class RecordStageScreen extends StatefulWidget {
 class _RecordStageScreenState extends State<RecordStageScreen> {
   late StageInfoProvider stageInfoProvider;
 
-  Map<String, String> lottieStringList = {
-    "반응속도": "speed_meter",
-    "똑같은 카드 누르기": "card_click",
-    "순서대로 누르기": "card_order",
-    "카드 나누기": "card_slice",
-    "짝맞추기": "card_match",
-  };
-
   Column getCurrentStageInfo() {
     String recordTimeStr = "미측정";
-    if(stageInfoProvider.currentStageInfoModel.recordTime != null) {
+    if (stageInfoProvider.currentStageInfoModel.recordTime != null) {
       recordTimeStr = "${stageInfoProvider.currentStageInfoModel.recordTime} ms";
     }
 
@@ -59,12 +51,13 @@ class _RecordStageScreenState extends State<RecordStageScreen> {
               children: [
                 CarouselSlider(
                   options: CarouselOptions(
-                      height: MediaQuery.of(context).size.height * 0.5,
-                      enlargeCenterPage: true,
-                      onPageChanged: (index, _) {
-                        stageInfoProvider.currentStageInfoModel = list[index];
-                        setState(() {});
-                      }),
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    enlargeCenterPage: true,
+                    onPageChanged: (index, _) {
+                      stageInfoProvider.currentStageInfoModel = list[index];
+                      setState(() {});
+                    },
+                  ),
                   items: list.map((item) {
                     return Builder(
                       builder: (BuildContext context) {
@@ -72,7 +65,7 @@ class _RecordStageScreenState extends State<RecordStageScreen> {
                           padding: const EdgeInsets.all(8.0),
                           child: GestureDetector(
                             onTap: () {
-                              Widget screenWidget = Datas.gameScreenStringList[stageInfoProvider.currentStageInfoModel.stageName]!;
+                              Widget screenWidget = Datas.stageScreenStringMap[stageInfoProvider.currentStageInfoModel.stageId]!;
                               Navigator.push(context, MaterialPageRoute(builder: (context) => screenWidget));
                             },
                             child: Container(
@@ -88,7 +81,7 @@ class _RecordStageScreenState extends State<RecordStageScreen> {
                                   ),
                                 ],
                               ),
-                              child: Lottie.asset('assets/lotties/${lottieStringList[item.stageName]}.json'),
+                              child: Lottie.asset('assets/lotties/${item.stageId}.json'),
                             ),
                           ),
                         );
@@ -98,7 +91,6 @@ class _RecordStageScreenState extends State<RecordStageScreen> {
                 ),
                 const SizedBox(height: 20),
                 getCurrentStageInfo()
-
               ],
             );
           },

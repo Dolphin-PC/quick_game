@@ -40,7 +40,7 @@ class _MainScreenState extends State<MainScreen> {
         elevation: 30,
         backgroundColor: ColorStyles.buttonBgColor.withRed(150),
         onPressed: () {
-          Widget screenWidget = Datas.gameScreenStringList[stageInfoProvider.currentStageInfoModel.stageName]!;
+          Widget screenWidget = Datas.stageScreenStringMap[stageInfoProvider.currentStageInfoModel.stageId]!;
           Navigator.push(context, MaterialPageRoute(builder: (context) => screenWidget));
         },
         child: const Icon(Icons.play_arrow),
