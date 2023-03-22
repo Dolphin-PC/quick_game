@@ -3,14 +3,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-class GameScreen extends StatefulWidget {
-  const GameScreen({Key? key}) : super(key: key);
+class SpeedMeterGameScreen extends StatefulWidget {
+  const SpeedMeterGameScreen({Key? key}) : super(key: key);
 
   @override
-  State<GameScreen> createState() => _GameScreenState();
+  State<SpeedMeterGameScreen> createState() => _SpeedMeterGameScreenState();
 }
 
-class _GameScreenState extends State<GameScreen> {
+class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
   /// 클릭 가능 여부
   bool isClickable = false;
 

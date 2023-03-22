@@ -15,9 +15,7 @@ class StageInfoProvider extends ChangeNotifier {
   }
 
   set currentStageInfoModel(StageInfoModel stageInfoModel) => _currentStageInfoModel = stageInfoModel;
-  StageInfoModel get currentStageInfoModel {
-    return _currentStageInfoModel!;
-  }
+  StageInfoModel get currentStageInfoModel => _currentStageInfoModel!;
 
   Future<List<StageInfoModel>> selectList() async {
     var list = await StageInfoModel.selectList();
