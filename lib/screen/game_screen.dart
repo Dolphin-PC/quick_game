@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -14,8 +13,10 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   /// 클릭 가능 여부
   bool isClickable = false;
+
   /// 시작 랜덤 시간
   int randomSecond = 0;
+
   /// widget 상태 값
   Color clickColor = Colors.blue;
   String clickText = '초록색으로 변하면 누르세요!\n(3~7초 뒤에 바뀌어요.)';
@@ -24,7 +25,6 @@ class _GameScreenState extends State<GameScreen> {
   /// 기록 측정
   Timer? resultTimer, initTimer;
   int _resultMilliSecond = 0;
-
 
   @override
   void initState() {
@@ -51,11 +51,11 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void onClick() {
-    if(!isClickable) {
+    if (!isClickable) {
       resultText = '측정 실패!';
       initTimer!.cancel();
     } else {
-      resultText = '${_resultMilliSecond}ms';
+      resultText = '측정 결과 : ${_resultMilliSecond}ms';
       _onStop();
     }
 
