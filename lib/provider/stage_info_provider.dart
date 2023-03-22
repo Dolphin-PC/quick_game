@@ -7,8 +7,10 @@ class StageInfoProvider extends ChangeNotifier {
 
   set stageInfoModelList(List<StageInfoModel> list) => _stageInfoModelList = list;
   Future<List<StageInfoModel>> getStageInfoModelList() async {
+    /// 최초 1회만 실행
     if (_stageInfoModelList.isEmpty) {
       _stageInfoModelList = await selectList();
+      _currentStageInfoModel = _stageInfoModelList.first;
     }
 
     return _stageInfoModelList;
@@ -18,8 +20,13 @@ class StageInfoProvider extends ChangeNotifier {
   StageInfoModel get currentStageInfoModel => _currentStageInfoModel!;
 
   Future<List<StageInfoModel>> selectList() async {
-    var list = await StageInfoModel.selectList();
-    _currentStageInfoModel = list.first;
-    return list;
+    return await StageInfoModel.selectList();
+  }
+
+  Future<void> setRecordTime(int time) async {
+    _currentStageInfoModel = await _currentStageInfoModel?.update({"record_time" : time});
+    _stageInfoModelList = await selectList();
+
+    notifyListeners();
   }
 }

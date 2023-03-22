@@ -15,6 +15,8 @@ class RecordStageScreen extends StatefulWidget {
 }
 
 class _RecordStageScreenState extends State<RecordStageScreen> {
+  late StageInfoProvider stageInfoProvider;
+
   Map<String, String> lottieStringList = {
     "반응속도": "speed_meter",
     "똑같은 카드 누르기": "card_click",
@@ -23,9 +25,23 @@ class _RecordStageScreenState extends State<RecordStageScreen> {
     "짝맞추기": "card_match",
   };
 
+  Column getCurrentStageInfo() {
+    String recordTimeStr = "미측정";
+    if(stageInfoProvider.currentStageInfoModel.recordTime != null) {
+      recordTimeStr = "${stageInfoProvider.currentStageInfoModel.recordTime} ms";
+    }
+
+    return Column(
+      children: [
+        Text(stageInfoProvider.currentStageInfoModel.stageName, style: TextStyles.titleText),
+        Text(recordTimeStr, style: TextStyles.plainText),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    StageInfoProvider stageInfoProvider = Provider.of(context, listen: true);
+    stageInfoProvider = Provider.of(context, listen: true);
 
     return Scaffold(
       backgroundColor: ColorStyles.bgPrimaryColor,
@@ -74,8 +90,8 @@ class _RecordStageScreenState extends State<RecordStageScreen> {
                   }).toList(),
                 ),
                 const SizedBox(height: 20),
-                Text(stageInfoProvider.currentStageInfoModel.stageName, style: TextStyles.titleText),
-                Text('${stageInfoProvider.currentStageInfoModel.recordTime ?? '미측정'}', style: TextStyles.plainText),
+                getCurrentStageInfo()
+
               ],
             );
           },

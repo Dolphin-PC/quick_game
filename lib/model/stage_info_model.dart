@@ -56,9 +56,22 @@ class StageInfoModel {
     await update({'is_delete': true});
   }
 
-  Future<void> update(Map<String, dynamic> prmMap) async {
+  Future<StageInfoModel> update(Map<String, dynamic> prmMap) async {
     final db = await DBHelper().database;
     await db.update(tableName, prmMap, where: 'id = ?', whereArgs: [id]);
+
+    final List<dynamic> maps = await db.query(tableName, where: 'id = ?', whereArgs: [id]);
+
+    List<StageInfoModel> list = List.generate(maps.length, (i) {
+      return StageInfoModel(
+        id: maps[i]['id'],
+        stageName: maps[i]['stage_name'],
+        recordTime: maps[i]['record_time'],
+        trainingLevel: maps[i]['training_level'],
+      );
+    });
+
+    return list.first;
   }
 
   /// 초기 데이터 세팅

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:quick_game/provider/stage_info_provider.dart';
 
 class SpeedMeterGameScreen extends StatefulWidget {
   const SpeedMeterGameScreen({Key? key}) : super(key: key);
@@ -11,6 +13,7 @@ class SpeedMeterGameScreen extends StatefulWidget {
 }
 
 class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
+  late StageInfoProvider stageInfoProvider;
   /// 클릭 가능 여부
   bool isClickable = false;
 
@@ -56,6 +59,8 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
       initTimer!.cancel();
     } else {
       resultText = '측정 결과 : ${_resultMilliSecond}ms';
+      /// 기록 측정
+      stageInfoProvider.setRecordTime(_resultMilliSecond);
       _onStop();
     }
 
@@ -74,6 +79,7 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    stageInfoProvider = Provider.of(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text('순발력 측정'),
