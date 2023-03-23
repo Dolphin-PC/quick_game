@@ -82,6 +82,7 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
       initTimer!.cancel();
       Toasts.show(msg: "측정 실패");
     } else {
+      trumpCardModel.isClicked = true;
       clickIndex++;
     }
 

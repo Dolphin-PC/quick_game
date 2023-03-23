@@ -44,17 +44,12 @@ class _TrumpCardState extends State<TrumpCard> {
   Widget build(BuildContext context) {
     switch (widget.trumpCardModel.cardType) {
       case CardType.general:
-        return CardFront(cardShape: widget.trumpCardModel.cardShape, cardNumber: widget.trumpCardModel.cardNumber);
+        return CardFront(trumpCardModel: widget.trumpCardModel);
       case CardType.flip:
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
           transitionBuilder: (Widget widget, Animation<double> animation) => CardController.flipAnimatedBuilder(widget, animation, isFront: isFront),
-          child: isFront
-              ? CardFront(
-                  cardShape: widget.trumpCardModel.cardShape,
-                  cardNumber: widget.trumpCardModel.cardNumber,
-                )
-              : const CardBack(),
+          child: isFront ? CardFront(trumpCardModel: widget.trumpCardModel) : const CardBack(),
         );
     }
   }
@@ -63,18 +58,16 @@ class _TrumpCardState extends State<TrumpCard> {
 class CardFront extends StatelessWidget {
   const CardFront({
     super.key,
-    required this.cardShape,
-    required this.cardNumber,
+    required this.trumpCardModel,
   });
 
-  final CardShape cardShape;
-  final int cardNumber;
+  final TrumpCardModel trumpCardModel;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: trumpCardModel.isClicked ? Colors.grey : Colors.white,
         borderRadius: BorderRadius.circular(10),
         boxShadow: const [
           BoxShadow(
@@ -91,12 +84,12 @@ class CardFront extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Image.asset('assets/images/${cardShape.name}.png'),
+            child: Image.asset('assets/images/${trumpCardModel.cardShape.name}.png'),
           ),
           Visibility(
-            visible: cardShape != CardShape.joker,
+            visible: trumpCardModel.cardShape != CardShape.joker,
             child: Text(
-              '$cardNumber',
+              '${trumpCardModel.cardNumber}',
               style: TextStyles.cardText.copyWith(color: ColorStyles.bgPrimaryColor),
               textAlign: TextAlign.center,
             ),
