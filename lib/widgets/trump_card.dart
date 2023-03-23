@@ -2,27 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:quick_game/main.dart';
+import 'package:quick_game/model/trump_card_model.dart';
 import 'package:quick_game/styles/color_styles.dart';
 import 'package:quick_game/styles/text_styles.dart';
 import 'package:quick_game/widgets/card_controller.dart';
 
-enum CardShape { diamond, clover, heart, spade, joker }
-
-enum CardType { general, flip }
-
 class TrumpCard extends StatefulWidget {
-  const TrumpCard({
-    Key? key,
-    required this.cardShape,
-    required this.cardType,
-    required this.cardNumber,
-    this.flipSecond = 3,
-  }) : super(key: key);
+  const TrumpCard({Key? key, required this.trumpCardModel}) : super(key: key);
 
-  final CardShape cardShape;
-  final CardType cardType;
-  final int cardNumber;
-  final int flipSecond;
+  final TrumpCardModel trumpCardModel;
 
   @override
   State<TrumpCard> createState() => _TrumpCardState();
@@ -34,7 +22,7 @@ class _TrumpCardState extends State<TrumpCard> {
   @override
   void initState() {
     super.initState();
-    switch (widget.cardType) {
+    switch (widget.trumpCardModel.cardType) {
       case CardType.general:
         break;
       case CardType.flip:
@@ -44,7 +32,7 @@ class _TrumpCardState extends State<TrumpCard> {
   }
 
   void initFlipCard() {
-    Timer(Duration(seconds: widget.flipSecond), () {
+    Timer(Duration(seconds: widget.trumpCardModel.flipSecond), () {
       setState(() {
         isFront = true;
         logger.i({'isFront': true});
@@ -54,17 +42,17 @@ class _TrumpCardState extends State<TrumpCard> {
 
   @override
   Widget build(BuildContext context) {
-    switch (widget.cardType) {
+    switch (widget.trumpCardModel.cardType) {
       case CardType.general:
-        return CardFront(cardShape: widget.cardShape, cardNumber: widget.cardNumber);
+        return CardFront(cardShape: widget.trumpCardModel.cardShape, cardNumber: widget.trumpCardModel.cardNumber);
       case CardType.flip:
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
           transitionBuilder: (Widget widget, Animation<double> animation) => CardController.flipAnimatedBuilder(widget, animation, isFront: isFront),
           child: isFront
               ? CardFront(
-                  cardShape: widget.cardShape,
-                  cardNumber: widget.cardNumber,
+                  cardShape: widget.trumpCardModel.cardShape,
+                  cardNumber: widget.trumpCardModel.cardNumber,
                 )
               : const CardBack(),
         );
