@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quick_game/screen/game/card_order_screen.dart';
 import 'package:quick_game/screen/game/joker_screen.dart';
 import 'package:quick_game/screen/game/speed_meter_game_screen.dart';
 
@@ -12,10 +13,10 @@ class Datas {
   };
 
   static Map<String, Widget> stageScreenStringMap = {
-    "speed_meter": SpeedMeterGameScreen(),
-    "joker": JokerScreen(),
-    "card_order": SpeedMeterGameScreen(),
-    "card_slice": SpeedMeterGameScreen(),
-    "card_match": SpeedMeterGameScreen(),
+    "speed_meter": const SpeedMeterGameScreen(),
+    "joker": const JokerScreen(),
+    "card_order": const CardOrderScreen(),
+    "card_slice": const SpeedMeterGameScreen(),
+    "card_match": const SpeedMeterGameScreen(),
   };
 }

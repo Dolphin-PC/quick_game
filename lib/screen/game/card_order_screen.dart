@@ -4,21 +4,20 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quick_game/common/widgets/dialogs.dart';
-import 'package:quick_game/main.dart';
 import 'package:quick_game/model/trump_card_model.dart';
 import 'package:quick_game/provider/stage_info_provider.dart';
 import 'package:quick_game/styles/color_styles.dart';
 import 'package:quick_game/widgets/toasts.dart';
 import 'package:quick_game/widgets/trump_card.dart';
 
-class JokerScreen extends StatefulWidget {
-  const JokerScreen({Key? key}) : super(key: key);
+class CardOrderScreen extends StatefulWidget {
+  const CardOrderScreen({Key? key}) : super(key: key);
 
   @override
-  State<JokerScreen> createState() => _JokerScreenState();
+  State<CardOrderScreen> createState() => _CardOrderScreenState();
 }
 
-class _JokerScreenState extends State<JokerScreen> {
+class _CardOrderScreenState extends State<CardOrderScreen> {
   late StageInfoProvider stageInfoProvider;
   late List<TrumpCardModel> trumpCardModelList = [];
 
@@ -31,6 +30,8 @@ class _JokerScreenState extends State<JokerScreen> {
   /// 기록 측정
   Timer? resultTimer, initTimer;
   int _resultMilliSecond = 0;
+  int cardCount = 9;
+  int clickIndex = 1;
 
   @override
   void initState() {
@@ -39,36 +40,22 @@ class _JokerScreenState extends State<JokerScreen> {
   }
 
   void initGame() {
-    int cardCount = 9;
-    int jokerIndex = Random().nextInt(9) + 1;
-    logger.i(jokerIndex);
-
     /// 게임 초기화
     isClickable = false;
     randomSecond = Random().nextInt(4) + 3; // (0~4)+3 랜덤
 
     /// 카드 초기화
     for (int i = 1; i <= cardCount; i++) {
-      if (i == jokerIndex) {
-        trumpCardModelList.add(
-          TrumpCardModel(
-            cardNumber: 0,
-            cardShape: CardShape.joker,
-            cardType: CardType.flip,
-            flipSecond: randomSecond,
-          ),
-        );
-      } else {
-        trumpCardModelList.add(
-          TrumpCardModel(
-            cardNumber: Random().nextInt(9) + 1,
-            cardShape: CardShape.values[Random().nextInt(CardShape.values.length - 1)],
-            cardType: CardType.flip,
-            flipSecond: randomSecond,
-          ),
-        );
-      }
+      trumpCardModelList.add(
+        TrumpCardModel(
+          cardNumber: i,
+          cardShape: CardShape.values[Random().nextInt(CardShape.values.length - 1)],
+          cardType: CardType.flip,
+          flipSecond: randomSecond,
+        ),
+      );
     }
+    trumpCardModelList.shuffle();
 
     initTimer = Timer(Duration(seconds: randomSecond), () {
       isClickable = true;
@@ -89,12 +76,16 @@ class _JokerScreenState extends State<JokerScreen> {
     resultTimer!.cancel();
   }
 
-  /// 측정 클릭
+  /// 카드 클릭
   void onClick({required TrumpCardModel trumpCardModel}) {
-    if (!isClickable || trumpCardModel.cardShape != CardShape.joker) {
+    if (!isClickable || clickIndex != trumpCardModel.cardNumber) {
       initTimer!.cancel();
       Toasts.show(msg: "측정 실패");
     } else {
+      clickIndex++;
+    }
+
+    if (clickIndex > cardCount) {
       _onStop();
       _onRecord();
     }

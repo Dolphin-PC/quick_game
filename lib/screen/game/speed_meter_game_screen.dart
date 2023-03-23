@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quick_game/common/widgets/dialogs.dart';
 import 'package:quick_game/provider/stage_info_provider.dart';
 import 'package:quick_game/styles/color_styles.dart';
 import 'package:quick_game/widgets/toasts.dart';
@@ -23,7 +24,7 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
   /// 시작 랜덤 시간
   int randomSecond = 0;
 
-  /// widget 상태 값
+  /// widgets 상태 값
   Color clickColor = Colors.blue;
   String clickText = '초록색으로 변하면 누르세요!\n(3~7초 뒤에 바뀌어요.)';
   String resultText = '측정 중';
@@ -76,10 +77,11 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
 
     /// 기록 측정
     int? prevRecordTime = stageInfoProvider.currentStageInfoModel.recordTime;
-    if( prevRecordTime == null || prevRecordTime > _resultMilliSecond ){
+    if (prevRecordTime == null || prevRecordTime > _resultMilliSecond) {
       stageInfoProvider.setRecordTime(_resultMilliSecond);
       Toasts.show(msg: "[신기록] 측정 성공!");
     }
+    Dialogs.recordDialog(context: context, resultMilliSecond: _resultMilliSecond);
   }
 
   /// 측정 시간 시작
