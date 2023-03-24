@@ -86,14 +86,24 @@ class CardFront extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Image.asset('assets/images/${trumpCardModel.cardShape.name}.png'),
           ),
+
+          /// 조커카드가 아닐 경우, 하단 텍스트 표시
           Visibility(
-            visible: trumpCardModel.cardShape != CardShape.joker,
+            visible: trumpCardModel.cardShape != CardShape.joker && trumpCardModel.cardDirection == null,
             child: Text(
               '${trumpCardModel.cardNumber}',
               style: TextStyles.cardText.copyWith(color: ColorStyles.bgPrimaryColor),
               textAlign: TextAlign.center,
             ),
-          )
+          ),
+          Visibility(
+            visible: trumpCardModel.cardDirection != null,
+            child: Icon(
+              trumpCardModel.cardDirection == CardDirection.left ? Icons.arrow_circle_left_rounded : Icons.arrow_circle_right_rounded,
+              color: ColorStyles.bgPrimaryColor,
+              size: 100,
+            ),
+          ),
         ],
       ),
     );

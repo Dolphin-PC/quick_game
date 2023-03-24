@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:provider/provider.dart';
 import 'package:quick_game/common/widgets/dialogs.dart';
+import 'package:quick_game/main.dart';
 import 'package:quick_game/model/trump_card_model.dart';
 import 'package:quick_game/provider/stage_info_provider.dart';
 import 'package:quick_game/styles/color_styles.dart';
@@ -34,7 +35,6 @@ class _CardSliceScreenState extends State<CardSliceScreen> {
   Timer? resultTimer, initTimer;
   int _resultMilliSecond = 0;
   int cardCount = 9;
-  int clickIndex = 1;
 
   @override
   void initState() {
@@ -53,7 +53,8 @@ class _CardSliceScreenState extends State<CardSliceScreen> {
         TrumpCardModel(
           cardNumber: i,
           cardShape: CardShape.values[Random().nextInt(CardShape.values.length - 1)],
-          cardType: CardType.general,
+          cardDirection: CardDirection.values[Random().nextInt(2)],
+          cardType: CardType.flip,
           flipSecond: randomSecond,
         ),
       );
@@ -79,30 +80,20 @@ class _CardSliceScreenState extends State<CardSliceScreen> {
     resultTimer!.cancel();
   }
 
-  /// 카드 클릭
-  void onClick({required TrumpCardModel trumpCardModel}) {
-    if (!isClickable || clickIndex != trumpCardModel.cardNumber) {
-      initTimer!.cancel();
-      Toasts.show(msg: "측정 실패");
-    } else {
-      trumpCardModel.isClicked = true;
-      clickIndex++;
-    }
-
-    if (clickIndex > cardCount) {
-      _onStop();
-      _onRecord();
-    }
-
-    setState(() {});
-  }
-
   /// 카드 swipe
   void _onSwipe(int? previousIndex, int? currentIndex, CardSwiperDirection direction) {
-    // TODO
-    debugPrint(
-      'the card $previousIndex was swiped to the ${direction.name}. Now the card $currentIndex is on top',
-    );
+    /// 게임 종료
+    if (currentIndex == null) {
+      _onStop();
+      _onRecord();
+      return;
+    }
+
+    if (direction.name != trumpCardModelList[previousIndex!].cardDirection!.name) {
+      initTimer!.cancel();
+      Toasts.show(msg: "측정 실패");
+    } else {}
+    setState(() {});
   }
 
   /// 측정 성공
@@ -133,18 +124,15 @@ class _CardSliceScreenState extends State<CardSliceScreen> {
           child: Column(
             children: [
               Flexible(
-                child: Stack(
-                  children: [
-                    Center(child: Text('hello')),
-                    CardSwiper(
-                      controller: controller,
-                      cardsCount: trumpCardModelList.length,
-                      onSwipe: _onSwipe,
-                      isVerticalSwipingEnabled: false,
-                      isLoop: false,
-                      cardBuilder: (ctx, index) => TrumpCard(trumpCardModel: trumpCardModelList[index]),
-                    ),
-                  ],
+                child: CardSwiper(
+                  controller: controller,
+                  cardsCount: trumpCardModelList.length,
+                  numberOfCardsDisplayed: 1,
+                  isDisabled: !isClickable,
+                  onSwipe: _onSwipe,
+                  isVerticalSwipingEnabled: false,
+                  isLoop: false,
+                  cardBuilder: (ctx, index) => TrumpCard(trumpCardModel: trumpCardModelList[index]),
                 ),
               ),
               Padding(
