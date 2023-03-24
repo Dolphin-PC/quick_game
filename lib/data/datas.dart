@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quick_game/screen/game/card_match_screen.dart';
 import 'package:quick_game/screen/game/card_order_screen.dart';
 import 'package:quick_game/screen/game/card_slice_screen.dart';
 import 'package:quick_game/screen/game/joker_screen.dart';
@@ -17,7 +18,7 @@ class Datas {
     "speed_meter": const SpeedMeterGameScreen(),
     "joker": const JokerScreen(),
     "card_order": const CardOrderScreen(),
-    "card_slice": CardSliceScreen(),
-    "card_match": const SpeedMeterGameScreen(),
+    "card_slice": const CardSliceScreen(),
+    "card_match": const CardMatchScreen(),
   };
 }

@@ -15,8 +15,8 @@ class TrumpCardModel {
 
   final CardShape cardShape;
   final CardType cardType;
-  final CardDirection? cardDirection;
   final int cardNumber;
-  final int flipSecond;
+  final CardDirection? cardDirection;
+  final int? flipSecond;
   bool isClicked;
 }

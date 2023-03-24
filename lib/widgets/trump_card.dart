@@ -18,6 +18,7 @@ class TrumpCard extends StatefulWidget {
 
 class _TrumpCardState extends State<TrumpCard> {
   bool isFront = false;
+  Timer? flipTimer;
 
   @override
   void initState() {
@@ -31,14 +32,21 @@ class _TrumpCardState extends State<TrumpCard> {
     }
   }
 
+  @override
+  void dispose() {
+    flipTimer?.cancel();
+    super.dispose();
+  }
+
   void initFlipCard() {
-    Timer(Duration(seconds: widget.trumpCardModel.flipSecond), () {
+    flipTimer = Timer(Duration(seconds: widget.trumpCardModel.flipSecond!), () {
       setState(() {
         isFront = true;
-        logger.i({'isFront': true});
       });
     });
   }
+
+
 
   @override
   Widget build(BuildContext context) {
