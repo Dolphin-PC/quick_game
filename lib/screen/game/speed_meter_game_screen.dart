@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quick_game/common/widgets/dialogs.dart';
 import 'package:quick_game/provider/stage_info_provider.dart';
+import 'package:quick_game/screen/game/game_abstract.dart';
 import 'package:quick_game/styles/color_styles.dart';
 import 'package:quick_game/widgets/toasts.dart';
 
@@ -15,7 +16,7 @@ class SpeedMeterGameScreen extends StatefulWidget {
   State<SpeedMeterGameScreen> createState() => _SpeedMeterGameScreenState();
 }
 
-class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
+class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> implements GameAbstract {
   late StageInfoProvider stageInfoProvider;
 
   /// 클릭 가능 여부
@@ -38,7 +39,9 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
     initGame();
   }
 
+  @override
   void initGame() {
+    _resultMilliSecond = 0;
     isClickable = false;
     clickColor = Colors.blue;
     clickText = '초록색으로 변하면 누르세요!\n(3~7초 뒤에 바뀌어요.)';
@@ -50,7 +53,7 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
         isClickable = true;
         clickColor = Colors.green;
         clickText = '누르세요!';
-        _onStart();
+        onStart();
       });
     });
   }
@@ -59,17 +62,20 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
   void onClick() {
     if (!isClickable) {
       initTimer!.cancel();
-      Dialogs.recordFailDialog(context: context, subMsg: "색이 바뀌면, 눌러주세요.", retryFn: initGame);
+      Dialogs.recordFailDialog(context: context, subMsg: "색이 바뀌면, 눌러주세요.", retryFn: () {
+        onStop();
+        initGame();
+      });
     } else {
-      _onStop();
-      _onRecord();
+      onStop();
+      onRecord();
     }
 
     setState(() {});
   }
 
-  /// 측정 성공
-  void _onRecord() {
+  @override
+  void onRecord() {
     clickText = '측정 결과 : ${_resultMilliSecond}ms';
 
     /// 기록 측정
@@ -81,16 +87,16 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
     Dialogs.recordDialog(context: context, resultMilliSecond: _resultMilliSecond);
   }
 
-  /// 측정 시간 시작
-  void _onStart() {
+  @override
+  void onStart() {
     resultTimer = Timer.periodic(const Duration(milliseconds: 1), (timer) {
       _resultMilliSecond++;
     });
   }
 
-  /// 측정 시간 종료
-  void _onStop() {
-    resultTimer!.cancel();
+  @override
+  void onStop() {
+    resultTimer?.cancel();
   }
 
   @override

@@ -12,6 +12,8 @@ import 'package:quick_game/styles/color_styles.dart';
 import 'package:quick_game/widgets/toasts.dart';
 import 'package:quick_game/widgets/trump_card.dart';
 
+import 'game_abstract.dart';
+
 class CardMatchScreen extends StatefulWidget {
   const CardMatchScreen({Key? key}) : super(key: key);
 
@@ -19,9 +21,10 @@ class CardMatchScreen extends StatefulWidget {
   State<CardMatchScreen> createState() => _CardMatchScreenState();
 }
 
-class _CardMatchScreenState extends State<CardMatchScreen> {
+class _CardMatchScreenState extends State<CardMatchScreen> implements GameAbstract {
   late StageInfoProvider stageInfoProvider;
   late List<PairCardModel> pairCardModelList = [];
+  List<int> clickedPairList = [];
 
   /// 클릭 가능 여부
   bool isClickable = false;
@@ -41,18 +44,21 @@ class _CardMatchScreenState extends State<CardMatchScreen> {
     initGame();
   }
 
+  @override
   void initGame() {
     /// 게임 초기화
     isClickable = false;
+    _resultMilliSecond = 0;
     randomSecond = Random().nextInt(4) + 3; // (0~4)+3 랜덤
 
     /// 카드 초기화
+    pairCardModelList.clear();
     for (int i = 1; i <= cardCount; i++) {
       pairCardModelList.add(
         PairCardModel(
           pairId: (i % 3) + 1,
           cardNumber: (i % 3) + 1,
-          cardShape: CardShape.values[Random().nextInt(CardShape.values.length - 1)],
+          cardShape: CardShape.values[(i % 3)],
           cardType: CardType.flip,
           flipSecond: randomSecond,
         ),
@@ -62,27 +68,28 @@ class _CardMatchScreenState extends State<CardMatchScreen> {
 
     initTimer = Timer(Duration(seconds: randomSecond), () {
       isClickable = true;
-      _onStart();
+      onStart();
       setState(() {});
     });
+    setState(() {});
   }
 
-  /// 측정 시간 시작
-  void _onStart() {
+  @override
+  void onStart() {
     resultTimer = Timer.periodic(const Duration(milliseconds: 1), (timer) {
       _resultMilliSecond++;
     });
   }
 
-  /// 측정 시간 종료
-  void _onStop() {
+  @override
+  void onStop() {
     resultTimer!.cancel();
   }
 
-  List<int> clickedPairList = [];
+
   /// 카드 클릭
   void onClick({required PairCardModel pairCardModel}) {
-    if(pairCardModel.isClicked) return;
+    if(!isClickable || pairCardModel.isClicked) return;
 
     pairCardModel.isClicked = true;
 
@@ -105,15 +112,15 @@ class _CardMatchScreenState extends State<CardMatchScreen> {
     }
 
     if (pairCardModelList.every((element) => element.isClicked == true)) {
-      _onStop();
-      _onRecord();
+      onStop();
+      onRecord();
     }
 
     setState(() {});
   }
 
-  /// 측정 성공
-  void _onRecord() {
+  @override
+  void onRecord() {
     /// 기록 측정
     int? prevRecordTime = stageInfoProvider.currentStageInfoModel.recordTime;
     if (prevRecordTime == null || prevRecordTime > _resultMilliSecond) {
@@ -121,6 +128,13 @@ class _CardMatchScreenState extends State<CardMatchScreen> {
       Toasts.show(msg: "[신기록] 달성!");
     }
     Dialogs.recordDialog(context: context, resultMilliSecond: _resultMilliSecond);
+  }
+
+  @override
+  void dispose() {
+    initTimer?.cancel();
+    resultTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -163,10 +177,4 @@ class _CardMatchScreenState extends State<CardMatchScreen> {
     );
   }
 
-  @override
-  void dispose() {
-    initTimer?.cancel();
-    resultTimer?.cancel();
-    super.dispose();
-  }
 }

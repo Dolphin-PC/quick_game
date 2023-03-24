@@ -8,6 +8,7 @@ import 'package:quick_game/common/widgets/dialogs.dart';
 import 'package:quick_game/main.dart';
 import 'package:quick_game/model/trump_card_model.dart';
 import 'package:quick_game/provider/stage_info_provider.dart';
+import 'package:quick_game/screen/game/game_abstract.dart';
 import 'package:quick_game/styles/color_styles.dart';
 import 'package:quick_game/widgets/toasts.dart';
 import 'package:quick_game/widgets/trump_card.dart';
@@ -19,7 +20,8 @@ class CardSliceScreen extends StatefulWidget {
   State<CardSliceScreen> createState() => _CardSliceScreenState();
 }
 
-class _CardSliceScreenState extends State<CardSliceScreen> {
+class _CardSliceScreenState extends State<CardSliceScreen> implements GameAbstract{
+  Key swiperKey = UniqueKey();
   final CardSwiperController controller = CardSwiperController();
 
   late StageInfoProvider stageInfoProvider;
@@ -42,12 +44,16 @@ class _CardSliceScreenState extends State<CardSliceScreen> {
     initGame();
   }
 
+  @override
   void initGame() {
+    swiperKey = UniqueKey();
     /// 게임 초기화
     isClickable = false;
+    _resultMilliSecond = 0;
     randomSecond = Random().nextInt(4) + 3; // (0~4)+3 랜덤
 
     /// 카드 초기화
+    trumpCardModelList.clear();
     for (int i = 1; i <= cardCount; i++) {
       trumpCardModelList.add(
         TrumpCardModel(
@@ -63,41 +69,26 @@ class _CardSliceScreenState extends State<CardSliceScreen> {
 
     initTimer = Timer(Duration(seconds: randomSecond), () {
       isClickable = true;
-      _onStart();
+      onStart();
       setState(() {});
     });
+    setState(() {});
   }
 
-  /// 측정 시간 시작
-  void _onStart() {
+  @override
+  void onStart() {
     resultTimer = Timer.periodic(const Duration(milliseconds: 1), (timer) {
       _resultMilliSecond++;
     });
   }
 
-  /// 측정 시간 종료
-  void _onStop() {
-    resultTimer!.cancel();
+  @override
+  void onStop() {
+    resultTimer?.cancel();
   }
 
-  /// 카드 swipe
-  void _onSwipe(int? previousIndex, int? currentIndex, CardSwiperDirection direction) {
-    /// 게임 종료
-    if (currentIndex == null) {
-      _onStop();
-      _onRecord();
-      return;
-    }
-
-    if (direction.name != trumpCardModelList[previousIndex!].cardDirection!.name) {
-      initTimer!.cancel();
-      Toasts.show(msg: "측정 실패");
-    } else {}
-    setState(() {});
-  }
-
-  /// 측정 성공
-  void _onRecord() {
+  @override
+  void onRecord() {
     /// 기록 측정
     int? prevRecordTime = stageInfoProvider.currentStageInfoModel.recordTime;
     if (prevRecordTime == null || prevRecordTime > _resultMilliSecond) {
@@ -105,6 +96,33 @@ class _CardSliceScreenState extends State<CardSliceScreen> {
       Toasts.show(msg: "[신기록] 달성!");
     }
     Dialogs.recordDialog(context: context, resultMilliSecond: _resultMilliSecond);
+  }
+
+  @override
+  void dispose() {
+    initTimer?.cancel();
+    resultTimer?.cancel();
+    super.dispose();
+  }
+
+  /// 카드 swipe
+  void _onSwipe(int? previousIndex, int? currentIndex, CardSwiperDirection direction) {
+    if (direction.name != trumpCardModelList[previousIndex!].cardDirection!.name) {
+      initTimer!.cancel();
+      Dialogs.recordFailDialog(context: context, subMsg: "올바른 방향으로 나눠주세요", retryFn: () {
+        onStop();
+        initGame();
+      });
+    }
+
+    /// 게임 종료
+    if (currentIndex == null) {
+      onStop();
+      onRecord();
+      return;
+    }
+
+    setState(() {});
   }
 
   @override
@@ -124,37 +142,42 @@ class _CardSliceScreenState extends State<CardSliceScreen> {
           child: Column(
             children: [
               Flexible(
-                child: CardSwiper(
-                  controller: controller,
-                  cardsCount: trumpCardModelList.length,
-                  numberOfCardsDisplayed: 1,
-                  isDisabled: !isClickable,
-                  onSwipe: _onSwipe,
-                  isVerticalSwipingEnabled: false,
-                  isLoop: false,
-                  cardBuilder: (ctx, index) => TrumpCard(trumpCardModel: trumpCardModelList[index]),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: CardSwiper(
+                    key: swiperKey,
+                    // controller: controller,
+                    cardsCount: trumpCardModelList.length,
+                    numberOfCardsDisplayed: 1,
+                    isDisabled: !isClickable,
+                    onSwipe: _onSwipe,
+                    isVerticalSwipingEnabled: false,
+                    isLoop: false,
+                    cardBuilder: (ctx, index) => TrumpCard(trumpCardModel: trumpCardModelList[index]),
+                  ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    FloatingActionButton(
-                      heroTag: 'left_btn',
-                      onPressed: controller.swipeLeft,
-                      backgroundColor: ColorStyles.borderColor,
-                      child: const Icon(Icons.keyboard_arrow_left),
-                    ),
-                    FloatingActionButton(
-                      heroTag: 'right_btn',
-                      onPressed: controller.swipeRight,
-                      backgroundColor: ColorStyles.borderColor,
-                      child: const Icon(Icons.keyboard_arrow_right),
-                    ),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   key: swiperKey,
+              //   padding: const EdgeInsets.symmetric(vertical: 32.0),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //     children: [
+              //       FloatingActionButton(
+              //         heroTag: 'left_btn',
+              //         onPressed: controller.swipeLeft,
+              //         backgroundColor: ColorStyles.borderColor,
+              //         child: const Icon(Icons.keyboard_arrow_left),
+              //       ),
+              //       FloatingActionButton(
+              //         heroTag: 'right_btn',
+              //         onPressed: controller.swipeRight,
+              //         backgroundColor: ColorStyles.borderColor,
+              //         child: const Icon(Icons.keyboard_arrow_right),
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -162,10 +185,5 @@ class _CardSliceScreenState extends State<CardSliceScreen> {
     );
   }
 
-  @override
-  void dispose() {
-    initTimer?.cancel();
-    resultTimer?.cancel();
-    super.dispose();
-  }
+
 }

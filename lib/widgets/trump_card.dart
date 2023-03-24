@@ -23,12 +23,14 @@ class _TrumpCardState extends State<TrumpCard> {
   @override
   void initState() {
     super.initState();
-    switch (widget.trumpCardModel.cardType) {
-      case CardType.general:
-        break;
-      case CardType.flip:
-        initFlipCard();
-        break;
+    initCard();
+  }
+
+  @override
+  void didUpdateWidget(TrumpCard old) {
+    super.didUpdateWidget(old);
+    if(old.trumpCardModel.key != widget.trumpCardModel.key){
+      initCard();
     }
   }
 
@@ -38,7 +40,19 @@ class _TrumpCardState extends State<TrumpCard> {
     super.dispose();
   }
 
+  initCard(){
+    isFront = false;
+    switch (widget.trumpCardModel.cardType) {
+      case CardType.general:
+        break;
+      case CardType.flip:
+        initFlipCard();
+        break;
+    }
+  }
+
   void initFlipCard() {
+    flipTimer?.cancel();
     flipTimer = Timer(Duration(seconds: widget.trumpCardModel.flipSecond!), () {
       setState(() {
         isFront = true;

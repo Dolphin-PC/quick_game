@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:quick_game/common/widgets/dialogs.dart';
 import 'package:quick_game/model/trump_card_model.dart';
 import 'package:quick_game/provider/stage_info_provider.dart';
+import 'package:quick_game/screen/game/game_abstract.dart';
 import 'package:quick_game/styles/color_styles.dart';
 import 'package:quick_game/widgets/toasts.dart';
 import 'package:quick_game/widgets/trump_card.dart';
@@ -17,7 +18,7 @@ class CardOrderScreen extends StatefulWidget {
   State<CardOrderScreen> createState() => _CardOrderScreenState();
 }
 
-class _CardOrderScreenState extends State<CardOrderScreen> {
+class _CardOrderScreenState extends State<CardOrderScreen> implements GameAbstract {
   late StageInfoProvider stageInfoProvider;
   late List<TrumpCardModel> trumpCardModelList = [];
 
@@ -39,15 +40,20 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
     initGame();
   }
 
+  @override
   void initGame() {
-    /// 게임 초기화
     isClickable = false;
+    _resultMilliSecond = 0;
     randomSecond = Random().nextInt(4) + 3; // (0~4)+3 랜덤
 
+    clickIndex = 1;
+
     /// 카드 초기화
+    trumpCardModelList.clear();
     for (int i = 1; i <= cardCount; i++) {
       trumpCardModelList.add(
         TrumpCardModel(
+          key: UniqueKey(),
           cardNumber: i,
           cardShape: CardShape.values[Random().nextInt(CardShape.values.length - 1)],
           cardType: CardType.flip,
@@ -59,43 +65,26 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
 
     initTimer = Timer(Duration(seconds: randomSecond), () {
       isClickable = true;
-      _onStart();
+      onStart();
       setState(() {});
     });
+    setState(() {});
   }
 
-  /// 측정 시간 시작
-  void _onStart() {
+  @override
+  void onStart() {
     resultTimer = Timer.periodic(const Duration(milliseconds: 1), (timer) {
       _resultMilliSecond++;
     });
   }
 
-  /// 측정 시간 종료
-  void _onStop() {
-    resultTimer!.cancel();
+  @override
+  void onStop() {
+    resultTimer?.cancel();
   }
 
-  /// 카드 클릭
-  void onClick({required TrumpCardModel trumpCardModel}) {
-    if (!isClickable || clickIndex != trumpCardModel.cardNumber) {
-      initTimer!.cancel();
-      Toasts.show(msg: "측정 실패");
-    } else {
-      trumpCardModel.isClicked = true;
-      clickIndex++;
-    }
-
-    if (clickIndex > cardCount) {
-      _onStop();
-      _onRecord();
-    }
-
-    setState(() {});
-  }
-
-  /// 측정 성공
-  void _onRecord() {
+  @override
+  void onRecord() {
     /// 기록 측정
     int? prevRecordTime = stageInfoProvider.currentStageInfoModel.recordTime;
     if (prevRecordTime == null || prevRecordTime > _resultMilliSecond) {
@@ -103,6 +92,47 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
       Toasts.show(msg: "[신기록] 달성!");
     }
     Dialogs.recordDialog(context: context, resultMilliSecond: _resultMilliSecond);
+  }
+
+  @override
+  void dispose() {
+    initTimer?.cancel();
+    resultTimer?.cancel();
+    super.dispose();
+  }
+
+
+  /// 카드 클릭
+  void onClick({required TrumpCardModel trumpCardModel}) {
+    if (isClickable && clickIndex == trumpCardModel.cardNumber) {
+      trumpCardModel.isClicked = true;
+      clickIndex++;
+    } else {
+      initTimer!.cancel();
+      String msg = "카드 번호 순서대로 눌러주세요";
+      if(!isClickable) {
+        msg = "카드가 뒤집히면, 눌러주세요";
+      }
+      Dialogs.recordFailDialog(context: context, subMsg: msg, retryFn: () {
+        onStop();
+        initGame();
+      });
+    }
+
+    if (!isClickable || clickIndex != trumpCardModel.cardNumber) {
+
+    } else {
+      trumpCardModel.isClicked = true;
+      clickIndex++;
+    }
+
+    /// 순서대로 전부 클릭했는지 체크
+    if (clickIndex > cardCount) {
+      onStop();
+      onRecord();
+    }
+
+    setState(() {});
   }
 
   @override
@@ -145,10 +175,5 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
     );
   }
 
-  @override
-  void dispose() {
-    initTimer?.cancel();
-    resultTimer?.cancel();
-    super.dispose();
-  }
+
 }
