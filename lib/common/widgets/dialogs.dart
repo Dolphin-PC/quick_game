@@ -4,6 +4,35 @@ import 'package:quick_game/styles/color_styles.dart';
 import 'package:quick_game/styles/text_styles.dart';
 
 class Dialogs {
+  static preGameModal({required BuildContext context, required Function startFn, required String msg}) {
+    Dialogs.confirmDialog(
+      succBtnName: "게임시작",
+      succFn: startFn,
+      cancelBtnName: "나가기",
+      cancelFn: () => Navigator.pop(context),
+      context: context,
+      contentWidget: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text(
+              '3~7초 뒤에 게임이 시작돼요',
+              style: TextStyles.plainTexts(25).copyWith(color: ColorStyles.bgPrimaryColor),
+              textAlign: TextAlign.center,
+            ),
+            Divider(height: 5, color: ColorStyles.borderColor),
+            Text(
+              msg,
+              style: TextStyles.plainTexts(15).copyWith(color: ColorStyles.bgSecondaryColor),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+
+  }
+
   /// 기록 성공 dialog
   static recordDialog({required BuildContext context, required int resultMilliSecond}) {
     Dialogs.noticeDialog(
@@ -12,7 +41,7 @@ class Dialogs {
       },
       context: context,
       contentWidget: Text(
-        '기록 측정 완료!\n$resultMilliSecond ms',
+        '기록 측정 완료\n$resultMilliSecond ms',
         style: TextStyles.plainTexts(30).copyWith(color: ColorStyles.bgPrimaryColor),
         textAlign: TextAlign.center,
       ),

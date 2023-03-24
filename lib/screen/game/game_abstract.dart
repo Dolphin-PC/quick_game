@@ -1,6 +1,9 @@
 import 'package:quick_game/provider/stage_info_provider.dart';
 
 abstract class GameAbstract {
+  /// 게임 시작 전, [게임 설명 모달]
+  preGameModal();
+
   /// 게임 초기화
   initGame();
 

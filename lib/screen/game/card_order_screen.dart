@@ -11,6 +11,8 @@ import 'package:quick_game/styles/color_styles.dart';
 import 'package:quick_game/widgets/toasts.dart';
 import 'package:quick_game/widgets/trump_card.dart';
 
+import '../../util.dart';
+
 class CardOrderScreen extends StatefulWidget {
   const CardOrderScreen({Key? key}) : super(key: key);
 
@@ -37,7 +39,14 @@ class _CardOrderScreenState extends State<CardOrderScreen> implements GameAbstra
   @override
   void initState() {
     super.initState();
-    initGame();
+    Util.execAfterBinding(() {
+      preGameModal();
+    });
+  }
+
+  @override
+  void preGameModal() {
+    Dialogs.preGameModal(context: context, msg: "카드의 번호 순서에 맞게 카드를 눌러주세요", startFn: initGame);
   }
 
   @override

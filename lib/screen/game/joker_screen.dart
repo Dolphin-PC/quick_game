@@ -9,6 +9,7 @@ import 'package:quick_game/model/trump_card_model.dart';
 import 'package:quick_game/provider/stage_info_provider.dart';
 import 'package:quick_game/screen/game/game_abstract.dart';
 import 'package:quick_game/styles/color_styles.dart';
+import 'package:quick_game/util.dart';
 import 'package:quick_game/widgets/toasts.dart';
 import 'package:quick_game/widgets/trump_card.dart';
 
@@ -36,7 +37,14 @@ class _JokerScreenState extends State<JokerScreen> implements GameAbstract {
   @override
   void initState() {
     super.initState();
-    initGame();
+    Util.execAfterBinding(() {
+      preGameModal();
+    });
+  }
+
+  @override
+  void preGameModal() {
+    Dialogs.preGameModal(context: context, msg: "조커 카드를\n찾아서 눌러주세요", startFn: initGame);
   }
 
   @override

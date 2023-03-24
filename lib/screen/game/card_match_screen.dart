@@ -45,6 +45,11 @@ class _CardMatchScreenState extends State<CardMatchScreen> implements GameAbstra
   }
 
   @override
+  void preGameModal() {
+    Dialogs.recordFailDialog(context: context, subMsg: "박스가 파란색에서 초록색으로 바뀌면 눌러주세요", retryFn: initGame);
+  }
+
+  @override
   void initGame() {
     /// 게임 초기화
     isClickable = false;

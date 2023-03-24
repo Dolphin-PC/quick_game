@@ -13,6 +13,8 @@ import 'package:quick_game/styles/color_styles.dart';
 import 'package:quick_game/widgets/toasts.dart';
 import 'package:quick_game/widgets/trump_card.dart';
 
+import '../../util.dart';
+
 class CardSliceScreen extends StatefulWidget {
   const CardSliceScreen({Key? key}) : super(key: key);
 
@@ -41,7 +43,14 @@ class _CardSliceScreenState extends State<CardSliceScreen> implements GameAbstra
   @override
   void initState() {
     super.initState();
-    initGame();
+    Util.execAfterBinding(() {
+      preGameModal();
+    });
+  }
+
+  @override
+  void preGameModal() {
+    Dialogs.preGameModal(context: context, msg: "카드가 가리키는 방향으로\n카드를 슬라이드 해주세요", startFn: initGame);
   }
 
   @override
