@@ -4,8 +4,12 @@ import 'package:quick_game/styles/color_styles.dart';
 import 'package:quick_game/styles/text_styles.dart';
 
 class Dialogs {
+  /// 기록 성공 dialog
   static recordDialog({required BuildContext context, required int resultMilliSecond}) {
     Dialogs.noticeDialog(
+      succFn: () {
+        Navigator.pop(context);
+      },
       context: context,
       contentWidget: Text(
         '기록 측정 완료!\n$resultMilliSecond ms',
@@ -15,15 +19,43 @@ class Dialogs {
     );
   }
 
+  /// 기록 실패 dialog
+  static recordFailDialog({required BuildContext context, required Function retryFn, required String subMsg}) {
+    Dialogs.confirmDialog(
+      succBtnName: "다시하기",
+      succFn: retryFn,
+      cancelBtnName: "나가기",
+      cancelFn: () => Navigator.pop(context),
+      context: context,
+      contentWidget: Column(
+        children: [
+          Text(
+            '기록 측정 실패!',
+            style: TextStyles.plainTexts(30).copyWith(color: ColorStyles.bgPrimaryColor),
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            subMsg,
+            style: TextStyles.plainTexts(20).copyWith(color: ColorStyles.bgPrimaryColor),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// [template] 버튼 하나만 있는 customDialog
   static noticeDialog({
     required BuildContext context,
     String? titleText,
     String succBtnName = "확인",
     Function? succFn,
+    Function? cancelFn,
     required Widget contentWidget,
   }) {
     return customDialog(
       succFn,
+      cancelFn,
       context: context,
       titleText: titleText,
       contentWidget: Column(
@@ -36,16 +68,19 @@ class Dialogs {
     );
   }
 
+  /// [template] 버튼 두개 있는 customDialog
   static confirmDialog({
     required BuildContext context,
-    String titleText = "제목",
+    String? titleText,
     String succBtnName = "확인",
-    required Function succFn,
+    Function? succFn,
+    Function? cancelFn,
     String cancelBtnName = "취소",
     required Widget contentWidget,
   }) {
     return customDialog(
       succFn,
+      cancelFn,
       context: context,
       titleText: titleText,
       contentWidget: Column(
@@ -59,6 +94,7 @@ class Dialogs {
     );
   }
 
+  /// [template] 디자인 없는 기본 dialog
   static defaultDialog({
     required BuildContext context,
     required String contentText,
@@ -82,16 +118,19 @@ class Dialogs {
     );
   }
 
+  /// [template] 디자인 있는 기본 dialog
   static customDialog(
-    Function? succFn, {
+    Function? succFn,
+    Function? cancelFn, {
     required BuildContext context,
-    String? titleText = "제목",
+    String? titleText,
     required Widget contentWidget,
     String? succBtnName,
     String? cancelBtnName,
   }) {
     return showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (build) {
         return AlertDialog(
           shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -104,7 +143,12 @@ class Dialogs {
             cancelBtnName == null
                 ? Container()
                 : ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      if (cancelFn != null) {
+                        cancelFn();
+                      }
+                      Navigator.pop(context);
+                    },
                     style: ElevatedButtonStyles.negative,
                     child: Text(cancelBtnName),
                   ),

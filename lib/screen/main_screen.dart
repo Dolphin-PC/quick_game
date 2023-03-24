@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:quick_game/data/datas.dart';
 import 'package:quick_game/provider/stage_info_provider.dart';
@@ -6,6 +7,7 @@ import 'package:quick_game/screen/record_stage_screen.dart';
 import 'package:quick_game/screen/game/speed_meter_game_screen.dart';
 import 'package:quick_game/screen/training_stage_screen.dart';
 import 'package:quick_game/styles/color_styles.dart';
+import 'package:quick_game/widgets/toasts.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);

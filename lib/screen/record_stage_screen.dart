@@ -26,8 +26,18 @@ class _RecordStageScreenState extends State<RecordStageScreen> {
 
     return Column(
       children: [
-        Text(stageInfoProvider.currentStageInfoModel.stageName, style: TextStyles.titleText),
-        Text(recordTimeStr, style: TextStyles.plainText),
+        SizedBox(
+          height: 60,
+          child: Center(child: Text(stageInfoProvider.currentStageInfoModel.stageName, style: TextStyles.titleText)),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: ColorStyles.buttonBgColor,
+            borderRadius: BorderRadius.circular(8)
+          ),
+          padding: const EdgeInsets.all(10),
+          child: Text(recordTimeStr, style: TextStyles.plainText),
+        ),
       ],
     );
   }

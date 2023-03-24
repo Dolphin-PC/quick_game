@@ -5,6 +5,7 @@ import 'package:quick_game/db/db_helper.dart';
 import 'package:quick_game/model/stage_info_model.dart';
 import 'package:quick_game/provider/stage_info_provider.dart';
 import 'package:quick_game/screen/main_screen.dart';
+import 'package:quick_game/screen/record_stage_screen.dart';
 
 var logger = Logger(printer: PrettyPrinter());
 var loggerNoStack = Logger(printer: PrettyPrinter(methodCount: 0));
@@ -31,8 +32,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MainScreen(),
+    return const MaterialApp(
+      // home: MainScreen(),
+      home: RecordStageScreen(),
     );
   }
 }

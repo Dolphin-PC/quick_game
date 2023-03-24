@@ -108,7 +108,7 @@ class _JokerScreenState extends State<JokerScreen> {
     int? prevRecordTime = stageInfoProvider.currentStageInfoModel.recordTime;
     if (prevRecordTime == null || prevRecordTime > _resultMilliSecond) {
       stageInfoProvider.setRecordTime(_resultMilliSecond);
-      Toasts.show(msg: "[신기록] 측정 성공!");
+      Toasts.show(msg: "[신기록] 달성!");
     }
     Dialogs.recordDialog(context: context, resultMilliSecond: _resultMilliSecond);
   }

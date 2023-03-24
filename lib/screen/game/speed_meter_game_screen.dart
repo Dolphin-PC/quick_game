@@ -27,7 +27,6 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
   /// widgets 상태 값
   Color clickColor = Colors.blue;
   String clickText = '초록색으로 변하면 누르세요!\n(3~7초 뒤에 바뀌어요.)';
-  String resultText = '측정 중';
 
   /// 기록 측정
   Timer? resultTimer, initTimer;
@@ -43,7 +42,6 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
     isClickable = false;
     clickColor = Colors.blue;
     clickText = '초록색으로 변하면 누르세요!\n(3~7초 뒤에 바뀌어요.)';
-    resultText = '측정 중';
 
     randomSecond = Random().nextInt(4) + 3; // (0~4)+3 랜덤
 
@@ -60,8 +58,8 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
   /// 측정 클릭
   void onClick() {
     if (!isClickable) {
-      resultText = '측정 실패!';
       initTimer!.cancel();
+      Dialogs.recordFailDialog(context: context, subMsg: "색이 바뀌면, 눌러주세요.", retryFn: initGame);
     } else {
       _onStop();
       _onRecord();
@@ -72,14 +70,13 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
 
   /// 측정 성공
   void _onRecord() {
-    resultText = '';
     clickText = '측정 결과 : ${_resultMilliSecond}ms';
 
     /// 기록 측정
     int? prevRecordTime = stageInfoProvider.currentStageInfoModel.recordTime;
     if (prevRecordTime == null || prevRecordTime > _resultMilliSecond) {
       stageInfoProvider.setRecordTime(_resultMilliSecond);
-      Toasts.show(msg: "[신기록] 측정 성공!");
+      Toasts.show(msg: "[신기록] 달성!");
     }
     Dialogs.recordDialog(context: context, resultMilliSecond: _resultMilliSecond);
   }
@@ -112,7 +109,6 @@ class _SpeedMeterGameScreenState extends State<SpeedMeterGameScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(resultText),
               SizedBox(height: 20),
               GestureDetector(
                 onTap: onClick,

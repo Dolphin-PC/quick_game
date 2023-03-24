@@ -82,14 +82,12 @@ class _CardMatchScreenState extends State<CardMatchScreen> {
   List<int> clickedPairList = [];
   /// 카드 클릭
   void onClick({required PairCardModel pairCardModel}) {
-    /// 이미 클릭된 상태일떄,
     if(pairCardModel.isClicked) return;
 
-    /// 일단 UI 변경해주고
     pairCardModel.isClicked = true;
 
-    /// 선택된 카드의 pairId
     int currentPairId = pairCardModel.pairId;
+    /// 다른 카드 선택했을 경우
     if(clickedPairList.isNotEmpty && !clickedPairList.contains(currentPairId)) {
       int prevPairId = clickedPairList.first;
       for(var prevCardModel in pairCardModelList){
@@ -106,9 +104,6 @@ class _CardMatchScreenState extends State<CardMatchScreen> {
       clickedPairList = [];
     }
 
-    logger.d(clickedPairList);
-
-
     if (pairCardModelList.every((element) => element.isClicked == true)) {
       _onStop();
       _onRecord();
@@ -123,7 +118,7 @@ class _CardMatchScreenState extends State<CardMatchScreen> {
     int? prevRecordTime = stageInfoProvider.currentStageInfoModel.recordTime;
     if (prevRecordTime == null || prevRecordTime > _resultMilliSecond) {
       stageInfoProvider.setRecordTime(_resultMilliSecond);
-      Toasts.show(msg: "[신기록] 측정 성공!");
+      Toasts.show(msg: "[신기록] 달성!");
     }
     Dialogs.recordDialog(context: context, resultMilliSecond: _resultMilliSecond);
   }
