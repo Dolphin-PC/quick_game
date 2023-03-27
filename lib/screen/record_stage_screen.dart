@@ -2,9 +2,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:quick_game/ads/ad_banner.dart';
 import 'package:quick_game/data/datas.dart';
 import 'package:quick_game/model/stage_info_model.dart';
 import 'package:quick_game/provider/stage_info_provider.dart';
+import 'package:quick_game/screen/setting_screen.dart';
 import 'package:quick_game/styles/color_styles.dart';
 import 'package:quick_game/styles/text_styles.dart';
 
@@ -30,13 +32,33 @@ class _RecordStageScreenState extends State<RecordStageScreen> {
           height: 60,
           child: Center(child: Text(stageInfoProvider.currentStageInfoModel.stageName, style: TextStyles.titleText)),
         ),
-        Container(
-          decoration: BoxDecoration(
-            color: ColorStyles.buttonBgColor,
-            borderRadius: BorderRadius.circular(8)
-          ),
-          padding: const EdgeInsets.all(10),
-          child: Text(recordTimeStr, style: TextStyles.plainText),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: ColorStyles.buttonBgColor,
+                borderRadius: BorderRadius.circular(8)
+              ),
+              padding: const EdgeInsets.all(10),
+              child: Text(recordTimeStr, style: TextStyles.plainText),
+            ),
+            SizedBox(width: 10),
+            GestureDetector(
+              onTap: () {
+                Widget screenWidget = Datas.stageScreenStringMap[stageInfoProvider.currentStageInfoModel.stageId]!;
+                Navigator.push(context, MaterialPageRoute(builder: (context) => screenWidget));
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(width: 1, color: ColorStyles.buttonBgColor),
+                    borderRadius: BorderRadius.circular(8)
+                ),
+                padding: const EdgeInsets.all(10),
+                child: Text('Game Start', style: TextStyles.plainText),
+              ),
+            )
+          ],
         ),
       ],
     );
@@ -48,6 +70,18 @@ class _RecordStageScreenState extends State<RecordStageScreen> {
 
     return Scaffold(
       backgroundColor: ColorStyles.bgPrimaryColor,
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: FloatingActionButton(
+          elevation: 30,
+          backgroundColor: ColorStyles.borderColor,
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => SettingScreen()));
+          },
+          child: const Icon(Icons.settings),
+        ),
+      ),
       body: Center(
         child: FutureBuilder(
           future: stageInfoProvider.getStageInfoModelList(),
@@ -100,12 +134,14 @@ class _RecordStageScreenState extends State<RecordStageScreen> {
                   }).toList(),
                 ),
                 const SizedBox(height: 20),
-                getCurrentStageInfo()
+                getCurrentStageInfo(),
+
               ],
             );
           },
         ),
       ),
+      bottomNavigationBar: const AdBanner(),
     );
   }
 }

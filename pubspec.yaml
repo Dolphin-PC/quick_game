@@ -1,5 +1,5 @@
 name: quick_game
-description: speed test game
+description: 순발력 게임
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -29,6 +29,7 @@ dependencies:
   google_fonts: ^4.0.3
   lottie: ^2.3.0
   flutter_card_swiper: ^3.1.0
+  google_mobile_ads: ^2.4.0
 
 dev_dependencies:
   flutter_test:
