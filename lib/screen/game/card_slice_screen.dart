@@ -153,7 +153,7 @@ class _CardSliceScreenState extends State<CardSliceScreen> implements GameAbstra
               Flexible(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: CardSwiper(
+                  child: trumpCardModelList.isNotEmpty ? CardSwiper(
                     key: swiperKey,
                     // controller: controller,
                     cardsCount: trumpCardModelList.length,
@@ -163,7 +163,7 @@ class _CardSliceScreenState extends State<CardSliceScreen> implements GameAbstra
                     isVerticalSwipingEnabled: false,
                     isLoop: false,
                     cardBuilder: (ctx, index) => TrumpCard(trumpCardModel: trumpCardModelList[index]),
-                  ),
+                  ) : Container(),
                 ),
               ),
               // Padding(

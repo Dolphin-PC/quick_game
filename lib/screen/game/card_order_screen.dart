@@ -160,7 +160,7 @@ class _CardOrderScreenState extends State<CardOrderScreen> implements GameAbstra
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: GridView.builder(
+            child: trumpCardModelList.isNotEmpty ? GridView.builder(
               shrinkWrap: true,
               itemCount: 9,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -177,7 +177,7 @@ class _CardOrderScreenState extends State<CardOrderScreen> implements GameAbstra
                   child: TrumpCard(trumpCardModel: trumpCardModelList[index]),
                 );
               },
-            ),
+            ) : Container(),
           ),
         ),
       ),

@@ -152,7 +152,7 @@ class _JokerScreenState extends State<JokerScreen> implements GameAbstract {
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: GridView.builder(
+            child: trumpCardModelList.isNotEmpty ? GridView.builder(
               shrinkWrap: true,
               itemCount: 9,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -171,7 +171,7 @@ class _JokerScreenState extends State<JokerScreen> implements GameAbstract {
                   ),
                 );
               },
-            ),
+            ) : Container(),
           ),
         ),
       ),
